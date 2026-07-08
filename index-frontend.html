@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Wali Kelas</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Mengatur variabel warna utama */
+    :root {
+      --navy-dark: #001f3f;
+      --navy-light: #003366;
+      --gold: #d4af37;
+      --gold-hover: #b5952f;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* --- GAYA UNTUK SIDEBAR (TEMA NAVY & GOLD) --- */
+    #sidebar {
+      min-width: 250px;
+      max-width: 250px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--navy-dark) 0%, var(--navy-light) 100%);
+      color: white;
+      transition: all 0.3s ease;
+      position: fixed;
+      z-index: 1060;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+    }
+    
+    #sidebar.active {
+      margin-left: -250px; 
+    }
+    
+    #sidebar .nav-link {
+      color: #c2c7d0;
+      padding: 15px 20px;
+      border-left: 4px solid transparent;
+    }
+    
+    #sidebar .nav-link:hover, #sidebar .nav-link.active-menu {
+      color: var(--gold);
+      background-color: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid var(--gold);
+    }
+
+    .text-gold {
+      color: var(--gold) !important;
+    }
+
+    /* --- OVERLAY UNTUK MOBILE --- */
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1055;
+    }
+    
+    /* --- GAYA UNTUK KONTEN UTAMA --- */
+    #content {
+      width: 100%;
+      margin-left: 250px;
+      transition: all 0.3s ease;
+      padding-bottom: 70px; 
+    }
+    
+    #content.active {
+      margin-left: 0;
+    }
+
+    /* Navbar Atas dengan Efek Shadow yang Keren & Tanpa Border */
+    .top-navbar {
+      background: #ffffff;
+      /* Efek shadow modern, lembut namun tegas */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); 
+      border: none !important; /* Memastikan tidak ada border bawah */
+    }
+
+    /* --- GAYA UNTUK BOTTOM NAVIGATION (MOBILE) --- */
+    .bottom-nav {
+      display: none; 
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--navy-dark);
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+      z-index: 1050;
+    }
+    
+    .bottom-nav-item {
+      flex-grow: 1;
+      text-align: center;
+      padding: 10px 0;
+      color: #adb5bd;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    
+    .bottom-nav-item i {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+    
+    .bottom-nav-item:hover, .bottom-nav-item.active-menu {
+      color: var(--gold); 
+    }
+
+    /* Tombol Kustom Warna Gold */
+    .btn-gold {
+      background-color: var(--gold);
+      color: var(--navy-dark);
+      font-weight: bold;
+      border: none;
+    }
+    .btn-gold:hover {
+      background-color: var(--gold-hover);
+      color: var(--navy-dark);
+    }
+
+    /* --- MEDIA QUERY (HP) --- */
+    @media (max-width: 768px) {
+      #sidebar {
+        margin-left: -250px; 
+      }
+      #sidebar.mobile-show {
+        margin-left: 0;
+      }
+      #content {
+        margin-left: 0; 
+      }
+      .bottom-nav {
+        display: flex; 
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="sidebar-overlay"></div>
+
+  <div class="d-flex">
+    
+    <nav id="sidebar">
+      <div class="p-4 text-center border-bottom border-secondary d-flex flex-column align-items-center position-relative">
+        <img src="https://sdntampojungtenggina.sch.id/wp-content/uploads/2023/04/cropped-ico-tenggina.png" 
+             alt="Logo SDN Tampojung Tenggina" 
+             class="img-fluid mb-2" 
+             style="max-height: 70px; object-fit: contain;">
+        <h6 class="m-0 text-gold fw-bold">SDN Tampojung Tenggina</h6>
+        <small class="text-white-50 mt-1">Aplikasi Wali Kelas</small>
+        
+        <button class="btn btn-sm btn-outline-light d-md-none position-absolute" id="btnCloseSidebar" style="top: 15px; right: 15px;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <ul class="nav flex-column mt-3">
+        <li class="nav-item"><a class="nav-link active-menu" href="#"><i class="fas fa-home me-2"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-users me-2"></i> Data Siswa</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-clipboard-check me-2"></i> Absensi</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-star me-2"></i> Nilai</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-book me-2"></i> Jurnal Kelas</a></li>
+      </ul>
+    </nav>
+
+    <div id="content">
+      
+      <nav class="navbar navbar-expand-lg top-navbar px-4 py-3 d-flex justify-content-between">
+        <div class="d-flex align-items-center">
+          <button type="button" id="sidebarCollapse" class="btn btn-gold d-none d-md-block">
+            <i class="fas fa-bars"></i>
+          </button>
+          <span class="ms-3 fw-bold" style="color: var(--navy-dark); font-size: 1.1rem;">Sistem Informasi Wali Kelas</span>
+        </div>
+
+        <button class="btn btn-gold btn-sm px-3" id="btnSync">
+          <i class="fas fa-sync-alt" id="syncIcon"></i> 
+          <span class="d-none d-sm-inline ms-1">Sinkron Data</span>
+        </button>
+      </nav>
+
+      <div class="container-fluid p-4">
+        <div class="row">
+          <div class="col-12">
+            <h2 style="color: var(--navy-dark);">Selamat Datang, Bapak/Ibu Guru!</h2>
+            <p>Perubahan berhasil diterapkan! Garis bawah pada navbar atas telah digantikan dengan *shadow* yang halus, dan logo resmi sekolah telah dipasang di bagian atas sidebar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="#" class="bottom-nav-item active-menu">
+      <i class="fas fa-home"></i>Home
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <i class="fas fa-users"></i>Siswa
+    </a>
+    <a href="#" class="bottom-nav-item">
+      <i class="fas fa-clipboard-check"></i>Absen
+    </a>
+    <a href="#" class="bottom-nav-item" id="btnMoreMobile">
+      <i class="fas fa-bars"></i>Lainnya
+    </a>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    $(document).ready(function () {
+      
+      // 1. Toggle Sidebar untuk Desktop
+      $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+        $('#content').toggleClass('active');
+      });
+
+      // 2. Munculkan Sidebar & Overlay di Mobile
+      $('#btnMoreMobile').on('click', function (e) {
+        e.preventDefault();
+        $('#sidebar').addClass('mobile-show');
+        $('#sidebar-overlay').fadeIn(300);
+      });
+
+      // 3. Tutup Sidebar saat klik tombol silang ATAU klik area overlay di luar sidebar
+      $('#btnCloseSidebar, #sidebar-overlay').on('click', function () {
+        $('#sidebar').removeClass('mobile-show');
+        $('#sidebar-overlay').fadeOut(300);
+      });
+
+      // 4. Animasi Tombol Sinkronisasi
+      $('#btnSync').on('click', function () {
+        let icon = $('#syncIcon');
+        let button = $(this);
+        
+        icon.addClass('fa-spin');
+        button.prop('disabled', true);
+        
+        setTimeout(function() {
+          icon.removeClass('fa-spin');
+          button.prop('disabled', false);
+        }, 1500);
+      });
+
+    });
+  </script>
+</body>
+</html>
